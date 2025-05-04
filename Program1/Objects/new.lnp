@@ -1,0 +1,6 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\Key.obj",
+".\Objects\Uart.obj" 
+TO ".\Objects\new" 
+PRINT(".\Listings\new.m51")

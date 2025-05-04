@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "c51.h": "c",
+        "intrins.h": "c",
+        "INTRINS.H": "cpp"
+    }
+}
