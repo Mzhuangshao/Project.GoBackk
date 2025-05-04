@@ -12,7 +12,7 @@ static unsigned char trigger_10ms_count = 0;
 static unsigned char RunningState = 0;
 static unsigned int minutes = 0, seconds = 0, milliseconds = 0; // 时间变量
 static unsigned char tableState[16];
-unsigned char i = 0;
+unsigned char i = 0, j = 0;
 
 void Uart1_Init(void) // 115200bps@11.0592MHz
 {
@@ -132,7 +132,7 @@ void main(void)
 {
     Timer0_Init();
     Uart1_Init();
-    P0PU |= 0x08; 
+    P0PU |= 0x08;
     EA = 1;
     while (1)
     {
