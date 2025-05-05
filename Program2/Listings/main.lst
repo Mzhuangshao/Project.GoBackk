@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:17:30 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   52   1              ; // 等待前面的数据发送完成
   53   1          UartBusy = 1;
   54   1          SBUF = dat; // 写数据到UART数据寄存器
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:17:30 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 2   
 
   55   1      }
   56          void SendMsg(char *s)
@@ -126,7 +126,7 @@ line level    source
  112   2          case 2:                       // 等待按键松开
  113   2              if (sensorGo == 1)        // 按键电位为高，视为松开
  114   2                  Key_Status_Check = 0; // 检测状态重置为默认
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:17:30 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 3   
 
  115   2              break;
  116   2          default:
@@ -190,7 +190,7 @@ line level    source
  172   2              break;
  173   2          case 2:
  174   2              if (KeyReset_State == 1)
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:17:30 PAGE 4   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 4   
 
  175   2              {
  176   3                  KeyReset_State = 0;
@@ -254,7 +254,7 @@ line level    source
  234   1      
  235   1          // 字节长度 = tableDisplaySettting + tableTimeData + tableEnd 的长度
  236   1          tableHead[3] = sizeof(tableDisplaySettting) + length + 1;
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:17:30 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 5   
 
  237   1          // 发送数据
  238   1          for (i = 0; i < sizeof(tableHead); i++)
@@ -273,25 +273,25 @@ line level    source
  251   1          // P0M0 &= ~0x08;P0M1 &= ~0x08; P0PU |= 0x08;
  252   1          // P3M0 &= ~0x04;
  253   1          // P3M1 &= ~0x04;
- 254   1          P3M0 &= ~0x70;
- 255   1          P3M1 &= ~0x70; // P34 P35 P36 设置为准双向口
- 256   1          EA = 1;
- 257   1          while (1)
- 258   1          {
- 259   2              StateCheck();
- 260   2              if (trigger_1ms)
- 261   2              {
- 262   3                  trigger_1ms = 0;
- 263   3                  KeyCheck();
- 264   3                  GoCheck();
- 265   3                  BackCheck();
- 266   3                  if (RunningState == 1) // 暂时禁用
- 267   3                      TimeCal();         // 暂时禁用
- 268   3              }
- 269   2              if (trigger_10ms)
- 270   2              {
- 271   3                  trigger_10ms = 0;
- 272   3                  // if (RunningState >= 1) // 暂时禁用
+ 254   1          // P3M0 &= ~0x70;
+ 255   1          // P3M1 &= ~0x70; // P34 P35 P36 设置为准双向口
+ 256   1          P3M0 &= ~0x74; P3M1 &= ~0x74; 
+ 257   1          EA = 1;
+ 258   1          while (1)
+ 259   1          {
+ 260   2              StateCheck();
+ 261   2              if (trigger_1ms)
+ 262   2              {
+ 263   3                  trigger_1ms = 0;
+ 264   3                  KeyCheck();
+ 265   3                  GoCheck();
+ 266   3                  BackCheck();
+ 267   3                  if (RunningState == 1) // 暂时禁用
+ 268   3                      TimeCal();         // 暂时禁用
+ 269   3              }
+ 270   2              if (trigger_10ms)
+ 271   2              {
+ 272   3                  trigger_10ms = 0;
  273   3                  LED_Show(); // 暂时禁用
  274   3      
  275   3                  // sprintf((char *)tableState, "State:%d", (int)RunningState);
@@ -318,7 +318,7 @@ line level    source
  296          void Uart1_Isr(void) interrupt 4
  297          {
  298   1          if (TI) // 检测串口1发送中断
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:17:30 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 6   
 
  299   1          {
  300   2              TI = 0; // 清除串口1发送中断请求位

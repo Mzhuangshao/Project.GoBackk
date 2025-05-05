@@ -251,8 +251,9 @@ void main(void)
     // P0M0 &= ~0x08;P0M1 &= ~0x08; P0PU |= 0x08;
     // P3M0 &= ~0x04;
     // P3M1 &= ~0x04;
-    P3M0 &= ~0x70;
-    P3M1 &= ~0x70; // P34 P35 P36 设置为准双向口
+    // P3M0 &= ~0x70;
+    // P3M1 &= ~0x70; // P34 P35 P36 设置为准双向口
+    P3M0 &= ~0x74; P3M1 &= ~0x74; 
     EA = 1;
     while (1)
     {
@@ -269,7 +270,6 @@ void main(void)
         if (trigger_10ms)
         {
             trigger_10ms = 0;
-            // if (RunningState >= 1) // 暂时禁用
             LED_Show(); // 暂时禁用
 
             // sprintf((char *)tableState, "State:%d", (int)RunningState);
