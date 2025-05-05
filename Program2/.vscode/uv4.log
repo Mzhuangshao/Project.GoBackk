@@ -2,7 +2,10 @@ Rebuild target 'Target 1'
 assembling STARTUP.A51...
 compiling main.c...
 linking...
-Program Size: data=87.4 xdata=0 code=2148
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SENDMSG?MAIN
+
+Program Size: data=90.7 xdata=0 code=2259
 creating hex file from ".\Objects\goBack"...
-".\Objects\goBack" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:00
+".\Objects\goBack" - 0 Error(s), 1 Warning(s).
+Build Time Elapsed:  00:00:01
