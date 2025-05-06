@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              05/06/2025 20:08:44 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -10,335 +10,233 @@ line level    source
 
    1          #include "C51.h"
    2          #include <string.h>
-   3          
-   4          void TimeReset();
-   5          void TimeCal();
-   6          void KeyCheck();
-   7          void GoCheck();
-   8          void BackCheck();
-   9          void StateCheck();
-  10          
-  11          sbit sensorGo = P3 ^ 6;   // 光电传感器检测触发，视为出发，触发标志
-  12          sbit sensorBack = P3 ^ 5; // 光电传感器检测触发，视为返回，触发标志
-  13          sbit KeyReset = P3 ^ 4;   // 按键[复位]
-  14          
-  15          static bit UartBusy = 0;
-  16          static bit trigger_1ms = 0;
-  17          static bit trigger_10ms = 0;
-  18          static bit KeyReset_State = 0;
-  19          static bit sensorGo_State = 0, sensorBack_State = 0;
-  20          
-  21          static unsigned char trigger_10ms_count = 0;
-  22          static unsigned char RunningState = 0;
-  23          static unsigned int minutes = 0, seconds = 0, milliseconds = 0; // 时间变量
-  24          static unsigned char tableState[16];
-  25          unsigned char i = 0;
-  26          
-  27          void Uart1_Init(void) // 115200bps@11.0592MHz
-  28          {
-  29   1          SCON = 0x50;  // 8位数据,可变波特率
-  30   1          AUXR |= 0x40; // 定时器时钟1T模式
-  31   1          AUXR &= 0xFE; // 串口1选择定时器1为波特率发生器
-  32   1          TMOD &= 0x0F; // 设置定时器模式
-  33   1          TL1 = 0xE8;   // 设置定时初始值
-  34   1          TH1 = 0xFF;   // 设置定时初始值
-  35   1          ET1 = 0;      // 禁止定时器中断
-  36   1          TR1 = 1;      // 定时器1开始计时
-  37   1          ES = 1;       // 使能串口1中断
-  38   1      }
-  39          void Timer0_Init(void) // 1毫秒@11.0592MHz
-  40          {
-  41   1          AUXR |= 0x80; // 定时器时钟1T模式
-  42   1          TMOD &= 0xF0; // 设置定时器模式
-  43   1          TL0 = 0xCD;   // 设置定时初始值
-  44   1          TH0 = 0xD4;   // 设置定时初始值
-  45   1          TF0 = 0;      // 清除TF0标志
-  46   1          TR0 = 1;      // 定时器0开始计时
-  47   1          ET0 = 1;      // 使能定时器0中断
-  48   1      }
-  49          void SendData(unsigned char dat)
-  50          {
-  51   1          while (UartBusy)
-  52   1              ; // 等待前面的数据发送完成
-  53   1          UartBusy = 1;
-  54   1          SBUF = dat; // 写数据到UART数据寄存器
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 2   
-
-  55   1      }
-  56          void SendMsg(char *s)
-  57          {
-  58   1          while (*s) // 检测字符串结束标志
-  59   1          {
-  60   2              SendData(*s++); // 发送当前字符
-  61   2          }
-  62   1      }
-  63          
-  64          void KeyCheck()
-  65          {
-  66   1          static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖
+   3          void TimeReset();
+   4          
+   5          static bit UartBusy = 0;
+   6          static bit trigger_1ms = 0, trigger_10ms = 0;
+   7          static bit KeyReset_State = 0;
+   8          
+   9          static unsigned char trigger_10ms_count = 0;
+  10          static unsigned char RunningState = 0;
+  11          static unsigned int minutes = 0, seconds = 0, milliseconds = 0; // 时间变量
+  12          static unsigned char tableDebug[16];
+  13          void Uart1_Init(void) // 115200bps@11.0592MHz
+  14          {
+  15   1          SCON = 0x50;  // 8位数据,可变波特率
+  16   1          AUXR |= 0x40; // 定时器时钟1T模式
+  17   1          AUXR &= 0xFE; // 串口1选择定时器1为波特率发生器
+  18   1          TMOD &= 0x0F; // 设置定时器模式
+  19   1          TL1 = 0xE8;   // 设置定时初始值
+  20   1          TH1 = 0xFF;   // 设置定时初始值
+  21   1          ET1 = 0;      // 禁止定时器中断
+  22   1          TR1 = 1;      // 定时器1开始计时
+  23   1          ES = 1;       // 使能串口1中断
+  24   1      }
+  25          void Timer0_Init(void) // 1毫秒@11.0592MHz
+  26          {
+  27   1          AUXR |= 0x80; // 定时器时钟1T模式
+  28   1          TMOD &= 0xF0; // 设置定时器模式
+  29   1          TL0 = 0xCD;   // 设置定时初始值
+  30   1          TH0 = 0xD4;   // 设置定时初始值
+  31   1          TF0 = 0;      // 清除TF0标志
+  32   1          TR0 = 1;      // 定时器0开始计时
+  33   1          ET0 = 1;      // 使能定时器0中断
+  34   1      }
+  35          void SendData(unsigned char dat)
+  36          {
+  37   1          while (UartBusy)
+  38   1              ; // 等待前面的数据发送完成
+  39   1          UartBusy = 1;
+  40   1          SBUF = dat; // 写数据到UART数据寄存器
+  41   1      }
+  42          
+  43          void KeyCheck()
+  44          {
+  45   1          static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖
              -检测，2表示按键松开
-  67   1          switch (Key_Status_Check)
-  68   1          {
-  69   2          case 0:                       // 默认状态
-  70   2              if (KeyReset == 0)        // 检测按键电位为0
-  71   2                  Key_Status_Check = 1; // 视按键为按下，进入去抖检测
-  72   2              break;
-  73   2      
-  74   2          case 1:                // 判断按键是否真的按下
-  75   2              if (KeyReset == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
-  76   2              {
-  77   3                  KeyReset_State = 1;   // 按键按下状态标记
-  78   3                  Key_Status_Check = 2; // 进入下一个状态：等待按键松开
-  79   3              }
-  80   2              else                      // 按键电位变高，说明仍有干扰，返回默认状态
-  81   2                  Key_Status_Check = 0; // 检测状态重置为默认
-  82   2              break;
-  83   2      
-  84   2          case 2:                       // 等待按键松开
-  85   2              if (KeyReset == 1)        // 按键电位为高，视为松开
-  86   2                  Key_Status_Check = 0; // 检测状态重置为默认
-  87   2              break;
-  88   2          default:
-  89   2              Key_Status_Check = 0; // 其它情况均重置为默认
+  46   1          switch (Key_Status_Check)
+  47   1          {
+  48   2          case 0:                       // 默认状态
+  49   2              if (P32 == 0)             // 检测按键电位为0
+  50   2                  Key_Status_Check = 1; // 视按键为按下，进入去抖检测
+  51   2              break;
+  52   2      
+  53   2          case 1:           // 判断按键是否真的按下
+C51 COMPILER V9.60.7.0   MAIN                                                              05/06/2025 20:08:44 PAGE 2   
+
+  54   2              if (P32 == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
+  55   2              {
+  56   3                  KeyReset_State = 1;   // 按键按下状态标记
+  57   3                  Key_Status_Check = 2; // 进入下一个状态：等待按键松开
+  58   3              }
+  59   2              else                      // 按键电位变高，说明仍有干扰，返回默认状态
+  60   2                  Key_Status_Check = 0; // 检测状态重置为默认
+  61   2              break;
+  62   2      
+  63   2          case 2:                       // 等待按键松开
+  64   2              if (P32 == 1)             // 按键电位为高，视为松开
+  65   2                  Key_Status_Check = 0; // 检测状态重置为默认
+  66   2              break;
+  67   2          default:
+  68   2              Key_Status_Check = 0; // 其它情况均重置为默认
+  69   2              break;
+  70   2          }
+  71   1      }
+  72          
+  73          void StateCheck() // 状态检测
+  74          {
+  75   1          if (KeyReset_State)
+  76   1          {
+  77   2              KeyReset_State = 0;
+  78   2              RunningState = 0;
+  79   2              TimeReset();
+  80   2          }
+  81   1          switch (RunningState)
+  82   1          {
+  83   2          case 0:
+  84   2              if (P35 == 0)
+  85   2                  RunningState = 1;
+  86   2              break;
+  87   2          case 1:
+  88   2              if (P36 == 0)
+  89   2                  RunningState = 2;
   90   2              break;
-  91   2          }
-  92   1      }
-  93          void GoCheck()
-  94          {
-  95   1          static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖
-             -检测，2表示按键松开
-  96   1          switch (Key_Status_Check)
-  97   1          {
-  98   2          case 0:                       // 默认状态
-  99   2              if (sensorGo == 0)        // 检测按键电位为0
- 100   2                  Key_Status_Check = 1; // 视按键为按下，进入去抖检测
- 101   2              break;
- 102   2          case 1:
- 103   2              if (sensorGo == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
- 104   2              {
- 105   3                  sensorGo_State = 1;   // 按键按下状态标记
- 106   3                  Key_Status_Check = 2; // 进入下一个状态：等待按键松开
- 107   3              }
- 108   2              else                      // 按键电位变高，说明仍有干扰，返回默认状态
- 109   2                  Key_Status_Check = 0; // 检测状态重置为默认
- 110   2              break;
- 111   2      
- 112   2          case 2:                       // 等待按键松开
- 113   2              if (sensorGo == 1)        // 按键电位为高，视为松开
- 114   2                  Key_Status_Check = 0; // 检测状态重置为默认
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 3   
+  91   2          default:
+  92   2              break;
+  93   2          }
+  94   1          if (RunningState == 3) // 运行状态检查
+  95   1              RunningState = 0;
+  96   1      }
+  97          
+  98          void TimeReset()
+  99          {
+ 100   1          minutes = 0;
+ 101   1          seconds = 0;
+ 102   1          milliseconds = 0;
+ 103   1      }
+ 104          void TimeCal()
+ 105          {
+ 106   1          milliseconds++;
+ 107   1          if (milliseconds >= 1000)
+ 108   1          {
+ 109   2              milliseconds = 0;
+ 110   2              seconds++;
+ 111   2              if (seconds >= 60)
+ 112   2              {
+ 113   3                  seconds = 0;
+ 114   3                  minutes++;
+ 115   3              }
+C51 COMPILER V9.60.7.0   MAIN                                                              05/06/2025 20:08:44 PAGE 3   
 
- 115   2              break;
- 116   2          default:
- 117   2              Key_Status_Check = 0; // 其它情况均重置为默认
- 118   2              break;
- 119   2          }
- 120   1      }
- 121          void BackCheck()
- 122          {
- 123   1          static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖
-             -检测，2表示按键松开
- 124   1          switch (Key_Status_Check)
- 125   1          {
- 126   2          case 0:                       // 默认状态
- 127   2              if (sensorBack == 0)      // 检测按键电位为0
- 128   2                  Key_Status_Check = 1; // 视按键为按下，进入去抖检测
- 129   2              break;
- 130   2          case 1:
- 131   2              if (sensorBack == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通�
-             -��
- 132   2              {
- 133   3                  sensorBack_State = 1; // 按键按下状态标记
- 134   3                  Key_Status_Check = 2; // 进入下一个状态：等待按键松开
- 135   3              }
- 136   2              else                      // 按键电位变高，说明仍有干扰，返回默认状态
- 137   2                  Key_Status_Check = 0; // 检测状态重置为默认
- 138   2              break;
- 139   2      
- 140   2          case 2:                       // 等待按键松开
- 141   2              if (sensorBack == 1)      // 按键电位为高，视为松开
- 142   2                  Key_Status_Check = 0; // 检测状态重置为默认
- 143   2              break;
- 144   2          default:
- 145   2              Key_Status_Check = 0; // 其它情况均重置为默认
- 146   2              break;
- 147   2          }
- 148   1      }
- 149          
- 150          void StateCheck() // 状态检测
- 151          {
- 152   1          if (KeyReset_State)
- 153   1          {
- 154   2              KeyReset_State = 0;
- 155   2              RunningState += 1;
- 156   2          }
- 157   1          switch (RunningState)
- 158   1          {
- 159   2          case 0:
- 160   2              if (sensorGo_State == 1)
- 161   2              {
- 162   3                  RunningState = 1;
- 163   3                  sensorGo_State = 0;
- 164   3              }
- 165   2              break;
- 166   2          case 1:
- 167   2              if (sensorBack_State == 1)
- 168   2              {
- 169   3                  RunningState = 2;
- 170   3                  sensorBack_State = 0;
- 171   3              }
- 172   2              break;
- 173   2          case 2:
- 174   2              if (KeyReset_State == 1)
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 4   
+ 116   2          }
+ 117   1      }
+ 118          void LED_Show(void)
+ 119          {
+ 120   1          unsigned char tableHead[] = {
+ 121   1              // 数据包头 | 卡地址| 字节长度
+ 122   1              0x55, 0xAA, 0x01, 0x00};
+ 123   1          unsigned char tableDisplaySettting[] = {
+ 124   1              0xC0, // 指令码 - C0 = 发送内容到显示屏
+ 125   1              0x00, // 编号 - 存储在0号位置
+ 126   1              0x04, // 类型 - 显示数值
+ 127   1              0x00, // 显示模式 - 立即显示
+ 128   1              0x00, // 字移动速度 - 不移动
+ 129   1              0x00, // 字停留秒数 - 不停留
+ 130   1              0x03, // 颜色 - 01红 02绿 03黄 // 但屏幕是单色，所以本项实际上无效
+ 131   1          };
+ 132   1          unsigned char tableTimeData[16];
+ 133   1          unsigned char tableEnd = 0x00;
+ 134   1          unsigned char length = 0, i = 0, sum = 0;
+ 135   1      
+ 136   1          sprintf((char *)tableTimeData, "%02d:%02d.%02d", minutes, seconds, (int)milliseconds / 10);
+ 137   1          length = strlen((char *)tableTimeData); // 计算tableTimeData的实际长度
+ 138   1          // 计算tableDisplaySettting和tableTimeData的累加和
+ 139   1          for (i = 0; i < sizeof(tableDisplaySettting); i++)
+ 140   1              sum += tableDisplaySettting[i];
+ 141   1          for (i = 0; i < length; i++)
+ 142   1              sum += tableTimeData[i];
+ 143   1          // 提取最低的8位，作为校验码
+ 144   1          tableEnd = (unsigned char)(sum & 0xFF);
+ 145   1      
+ 146   1          // 字节长度 = tableDisplaySettting + tableTimeData + tableEnd 的长度
+ 147   1          tableHead[3] = sizeof(tableDisplaySettting) + length + 1;
+ 148   1          // 发送数据
+ 149   1          for (i = 0; i < sizeof(tableHead); i++)
+ 150   1              SendData(tableHead[i]);
+ 151   1          for (i = 0; i < sizeof(tableDisplaySettting); i++)
+ 152   1              SendData(tableDisplaySettting[i]);
+ 153   1          for (i = 0; i < length; i++)
+ 154   1              SendData(tableTimeData[i]);
+ 155   1          SendData(tableEnd); // 发送校验码
+ 156   1      }
+ 157          
+ 158          void main(void)
+ 159          {
+ 160   1          Timer0_Init();
+ 161   1          Uart1_Init();
+ 162   1          P3M0 &= ~0x74;
+ 163   1          P3M1 &= ~0x74; // P32 P34 P35 P36 准双向口
+ 164   1          EA = 1;
+ 165   1          while (1)
+ 166   1          {
+ 167   2              StateCheck();
+ 168   2              if (trigger_1ms)
+ 169   2              {
+ 170   3                  trigger_1ms = 0;
+ 171   3                  KeyCheck();
+ 172   3                  if (RunningState == 1)
+ 173   3                      TimeCal();
+ 174   3              }
+ 175   2              if (trigger_10ms)
+ 176   2              {
+ 177   3                  trigger_10ms = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              05/06/2025 20:08:44 PAGE 4   
 
- 175   2              {
- 176   3                  KeyReset_State = 0;
- 177   3                  TimeReset();
- 178   3              }
- 179   2              break;
- 180   2          default:
- 181   2              break;
- 182   2          }
- 183   1          if (RunningState == 4) // 运行状态检查
- 184   1              RunningState = 0;
- 185   1      }
- 186          
- 187          void TimeReset()
- 188          {
- 189   1          minutes = 0;
- 190   1          seconds = 0;
- 191   1          milliseconds = 0;
- 192   1      }
- 193          void TimeCal()
- 194          {
- 195   1          milliseconds++;
- 196   1          if (milliseconds >= 1000)
- 197   1          {
- 198   2              milliseconds = 0;
- 199   2              seconds++;
- 200   2              if (seconds >= 60)
- 201   2              {
- 202   3                  seconds = 0;
- 203   3                  minutes++;
- 204   3              }
- 205   2          }
- 206   1      }
- 207          void LED_Show(void)
- 208          {
- 209   1          unsigned char tableHead[] = {
- 210   1              // 数据包头 | 卡地址| 字节长度
- 211   1              0x55, 0xAA, 0x01, 0x00};
- 212   1          unsigned char tableDisplaySettting[] = {
- 213   1              0xC0, // 指令码 - C0 = 发送内容到显示屏
- 214   1              0x00, // 编号 - 存储在0号位置
- 215   1              0x04, // 类型 - 显示数值
- 216   1              0x00, // 显示模式 - 立即显示
- 217   1              0x00, // 字移动速度 - 不移动
- 218   1              0x00, // 字停留秒数 - 不停留
- 219   1              0x03, // 颜色 - 01红 02绿 03黄 // 但屏幕是单色，所以本项实际上无效
- 220   1          };
- 221   1          unsigned char tableTimeData[16];
- 222   1          unsigned char tableEnd = 0x00;
- 223   1          unsigned char length = 0, i = 0, sum = 0;
- 224   1      
- 225   1          sprintf((char *)tableTimeData, "%02d:%02d.%02d", minutes, seconds, (int)milliseconds / 10);
- 226   1          length = strlen((char *)tableTimeData); // 计算tableTimeData的实际长度
- 227   1          // 计算tableDisplaySettting和tableTimeData的累加和
- 228   1          for (i = 0; i < sizeof(tableDisplaySettting); i++)
- 229   1              sum += tableDisplaySettting[i];
- 230   1          for (i = 0; i < length; i++)
- 231   1              sum += tableTimeData[i];
- 232   1          // 提取最低的8位，作为校验码
- 233   1          tableEnd = (unsigned char)(sum & 0xFF);
- 234   1      
- 235   1          // 字节长度 = tableDisplaySettting + tableTimeData + tableEnd 的长度
- 236   1          tableHead[3] = sizeof(tableDisplaySettting) + length + 1;
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 5   
-
- 237   1          // 发送数据
- 238   1          for (i = 0; i < sizeof(tableHead); i++)
- 239   1              SendData(tableHead[i]);
- 240   1          for (i = 0; i < sizeof(tableDisplaySettting); i++)
- 241   1              SendData(tableDisplaySettting[i]);
- 242   1          for (i = 0; i < length; i++)
- 243   1              SendData(tableTimeData[i]);
- 244   1          SendData(tableEnd); // 发送校验码
- 245   1      }
- 246          
- 247          void main(void)
- 248          {
- 249   1          Timer0_Init();
- 250   1          Uart1_Init();
- 251   1          // P0M0 &= ~0x08;P0M1 &= ~0x08; P0PU |= 0x08;
- 252   1          // P3M0 &= ~0x04;
- 253   1          // P3M1 &= ~0x04;
- 254   1          // P3M0 &= ~0x70;
- 255   1          // P3M1 &= ~0x70; // P34 P35 P36 设置为准双向口
- 256   1          P3M0 &= ~0x74; P3M1 &= ~0x74; 
- 257   1          EA = 1;
- 258   1          while (1)
- 259   1          {
- 260   2              StateCheck();
- 261   2              if (trigger_1ms)
- 262   2              {
- 263   3                  trigger_1ms = 0;
- 264   3                  KeyCheck();
- 265   3                  GoCheck();
- 266   3                  BackCheck();
- 267   3                  if (RunningState == 1) // 暂时禁用
- 268   3                      TimeCal();         // 暂时禁用
- 269   3              }
- 270   2              if (trigger_10ms)
- 271   2              {
- 272   3                  trigger_10ms = 0;
- 273   3                  LED_Show(); // 暂时禁用
- 274   3      
- 275   3                  // sprintf((char *)tableState, "State:%d", (int)RunningState);
- 276   3                  // if (++i >= 5)
- 277   3                  // {
- 278   3                  //     SendMsg((char *)tableState);
- 279   3                  //     i = 0;
- 280   3                  // }
- 281   3              }
- 282   2          }
- 283   1      }
- 284          
- 285          // 1ms定时器中断服务程序
- 286          void Timer0_Isr(void) interrupt 1
- 287          {
- 288   1          trigger_1ms = 1;
- 289   1          if (++trigger_10ms_count == 10) // 10ms触发计数
- 290   1          {
- 291   2              trigger_10ms_count = 0;
- 292   2              trigger_10ms = 1;
- 293   2          }
- 294   1      }
- 295          
- 296          void Uart1_Isr(void) interrupt 4
- 297          {
- 298   1          if (TI) // 检测串口1发送中断
-C51 COMPILER V9.60.7.0   MAIN                                                              05/05/2025 21:28:21 PAGE 6   
-
- 299   1          {
- 300   2              TI = 0; // 清除串口1发送中断请求位
- 301   2          }
- 302   1          if (RI) // 检测串口1接收中断
- 303   1          {
- 304   2              RI = 0; // 清除串口1接收中断请求位
- 305   2          }
- 306   1          UartBusy = 0;
- 307   1      }
+ 178   3                  LED_Show();
+ 179   3                  // sprintf((char *)tableDebug, "State:%d", (int)RunningState);
+ 180   3                  // if (++i >= 10)
+ 181   3                  // {
+ 182   3                  //     LED_Show(); // 暂时禁用
+ 183   3                  //     SendMsg((char *)tableDebug);
+ 184   3                  //     i = 0;
+ 185   3                  // }
+ 186   3              }
+ 187   2          }
+ 188   1      }
+ 189          
+ 190          // 1ms定时器中断服务程序
+ 191          void Timer0_Isr(void) interrupt 1
+ 192          {
+ 193   1          trigger_1ms = 1;
+ 194   1          if (++trigger_10ms_count == 10) // 10ms触发计数
+ 195   1          {
+ 196   2              trigger_10ms_count = 0;
+ 197   2              trigger_10ms = 1;
+ 198   2          }
+ 199   1      }
+ 200          
+ 201          void Uart1_Isr(void) interrupt 4
+ 202          {
+ 203   1          if (TI) // 检测串口1发送中断
+ 204   1          {
+ 205   2              TI = 0; // 清除串口1发送中断请求位
+ 206   2          }
+ 207   1          if (RI) // 检测串口1接收中断
+ 208   1          {
+ 209   2              RI = 0; // 清除串口1接收中断请求位
+ 210   2          }
+ 211   1          UartBusy = 0;
+ 212   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    594    ----
+   CODE SIZE        =    463    ----
    CONSTANT SIZE    =     26    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     28      32
+   DATA SIZE        =     25      29
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      6    ----
+   BIT SIZE         =      4    ----
 END OF MODULE INFORMATION.
 
 

@@ -1,29 +1,15 @@
 #include "C51.h"
 #include <string.h>
-
 void TimeReset();
-void TimeCal();
-void KeyCheck();
-void GoCheck();
-void BackCheck();
-void StateCheck();
-
-sbit sensorGo = P3 ^ 6;   // 光电传感器检测触发，视为出发，触发标志
-sbit sensorBack = P3 ^ 5; // 光电传感器检测触发，视为返回，触发标志
-sbit KeyReset = P3 ^ 4;   // 按键[复位]
 
 static bit UartBusy = 0;
-static bit trigger_1ms = 0;
-static bit trigger_10ms = 0;
+static bit trigger_1ms = 0, trigger_10ms = 0;
 static bit KeyReset_State = 0;
-static bit sensorGo_State = 0, sensorBack_State = 0;
 
 static unsigned char trigger_10ms_count = 0;
 static unsigned char RunningState = 0;
 static unsigned int minutes = 0, seconds = 0, milliseconds = 0; // 时间变量
-static unsigned char tableState[16];
-unsigned char i = 0;
-
+static unsigned char tableDebug[16];
 void Uart1_Init(void) // 115200bps@11.0592MHz
 {
     SCON = 0x50;  // 8位数据,可变波特率
@@ -53,13 +39,6 @@ void SendData(unsigned char dat)
     UartBusy = 1;
     SBUF = dat; // 写数据到UART数据寄存器
 }
-void SendMsg(char *s)
-{
-    while (*s) // 检测字符串结束标志
-    {
-        SendData(*s++); // 发送当前字符
-    }
-}
 
 void KeyCheck()
 {
@@ -67,12 +46,12 @@ void KeyCheck()
     switch (Key_Status_Check)
     {
     case 0:                       // 默认状态
-        if (KeyReset == 0)        // 检测按键电位为0
+        if (P32 == 0)             // 检测按键电位为0
             Key_Status_Check = 1; // 视按键为按下，进入去抖检测
         break;
 
-    case 1:                // 判断按键是否真的按下
-        if (KeyReset == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
+    case 1:           // 判断按键是否真的按下
+        if (P32 == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
         {
             KeyReset_State = 1;   // 按键按下状态标记
             Key_Status_Check = 2; // 进入下一个状态：等待按键松开
@@ -82,63 +61,7 @@ void KeyCheck()
         break;
 
     case 2:                       // 等待按键松开
-        if (KeyReset == 1)        // 按键电位为高，视为松开
-            Key_Status_Check = 0; // 检测状态重置为默认
-        break;
-    default:
-        Key_Status_Check = 0; // 其它情况均重置为默认
-        break;
-    }
-}
-void GoCheck()
-{
-    static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖检测，2表示按键松开
-    switch (Key_Status_Check)
-    {
-    case 0:                       // 默认状态
-        if (sensorGo == 0)        // 检测按键电位为0
-            Key_Status_Check = 1; // 视按键为按下，进入去抖检测
-        break;
-    case 1:
-        if (sensorGo == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
-        {
-            sensorGo_State = 1;   // 按键按下状态标记
-            Key_Status_Check = 2; // 进入下一个状态：等待按键松开
-        }
-        else                      // 按键电位变高，说明仍有干扰，返回默认状态
-            Key_Status_Check = 0; // 检测状态重置为默认
-        break;
-
-    case 2:                       // 等待按键松开
-        if (sensorGo == 1)        // 按键电位为高，视为松开
-            Key_Status_Check = 0; // 检测状态重置为默认
-        break;
-    default:
-        Key_Status_Check = 0; // 其它情况均重置为默认
-        break;
-    }
-}
-void BackCheck()
-{
-    static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖检测，2表示按键松开
-    switch (Key_Status_Check)
-    {
-    case 0:                       // 默认状态
-        if (sensorBack == 0)      // 检测按键电位为0
-            Key_Status_Check = 1; // 视按键为按下，进入去抖检测
-        break;
-    case 1:
-        if (sensorBack == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
-        {
-            sensorBack_State = 1; // 按键按下状态标记
-            Key_Status_Check = 2; // 进入下一个状态：等待按键松开
-        }
-        else                      // 按键电位变高，说明仍有干扰，返回默认状态
-            Key_Status_Check = 0; // 检测状态重置为默认
-        break;
-
-    case 2:                       // 等待按键松开
-        if (sensorBack == 1)      // 按键电位为高，视为松开
+        if (P32 == 1)             // 按键电位为高，视为松开
             Key_Status_Check = 0; // 检测状态重置为默认
         break;
     default:
@@ -152,35 +75,23 @@ void StateCheck() // 状态检测
     if (KeyReset_State)
     {
         KeyReset_State = 0;
-        RunningState += 1;
+        RunningState = 0;
+        TimeReset();
     }
     switch (RunningState)
     {
     case 0:
-        if (sensorGo_State == 1)
-        {
+        if (P35 == 0)
             RunningState = 1;
-            sensorGo_State = 0;
-        }
         break;
     case 1:
-        if (sensorBack_State == 1)
-        {
+        if (P36 == 0)
             RunningState = 2;
-            sensorBack_State = 0;
-        }
-        break;
-    case 2:
-        if (KeyReset_State == 1)
-        {
-            KeyReset_State = 0;
-            TimeReset();
-        }
         break;
     default:
         break;
     }
-    if (RunningState == 4) // 运行状态检查
+    if (RunningState == 3) // 运行状态检查
         RunningState = 0;
 }
 
@@ -248,12 +159,8 @@ void main(void)
 {
     Timer0_Init();
     Uart1_Init();
-    // P0M0 &= ~0x08;P0M1 &= ~0x08; P0PU |= 0x08;
-    // P3M0 &= ~0x04;
-    // P3M1 &= ~0x04;
-    // P3M0 &= ~0x70;
-    // P3M1 &= ~0x70; // P34 P35 P36 设置为准双向口
-    P3M0 &= ~0x74; P3M1 &= ~0x74; 
+    P3M0 &= ~0x74;
+    P3M1 &= ~0x74; // P32 P34 P35 P36 准双向口
     EA = 1;
     while (1)
     {
@@ -262,20 +169,18 @@ void main(void)
         {
             trigger_1ms = 0;
             KeyCheck();
-            GoCheck();
-            BackCheck();
-            if (RunningState == 1) // 暂时禁用
-                TimeCal();         // 暂时禁用
+            if (RunningState == 1)
+                TimeCal();
         }
         if (trigger_10ms)
         {
             trigger_10ms = 0;
-            LED_Show(); // 暂时禁用
-
-            // sprintf((char *)tableState, "State:%d", (int)RunningState);
-            // if (++i >= 5)
+            LED_Show();
+            // sprintf((char *)tableDebug, "State:%d", (int)RunningState);
+            // if (++i >= 10)
             // {
-            //     SendMsg((char *)tableState);
+            //     LED_Show(); // 暂时禁用
+            //     SendMsg((char *)tableDebug);
             //     i = 0;
             // }
         }
