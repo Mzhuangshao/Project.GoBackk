@@ -168,8 +168,6 @@ void main(void)
         if (trigger_1ms)
         {
             trigger_1ms = 0;
-            if (RunningState == 1)
-                TimeCal();
             KeyCheck();
         }
         if (trigger_10ms)
@@ -196,6 +194,8 @@ void Timer0_Isr(void) interrupt 1
         trigger_10ms_count = 0;
         trigger_10ms = 1;
     }
+    if (RunningState == 1)
+        TimeCal();
 }
 
 void Uart1_Isr(void) interrupt 4
