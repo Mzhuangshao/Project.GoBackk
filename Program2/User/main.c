@@ -40,7 +40,7 @@ void SendData(unsigned char dat)
     SBUF = dat; // 写数据到UART数据寄存器
 }
 
-void KeyCheck()
+void KeyCheck(void)
 {
     static unsigned char Key_Status_Check = 0; // 定义按键状态判断，0为默认状态，1为去抖检测，2表示按键松开
     switch (Key_Status_Check)
@@ -70,7 +70,7 @@ void KeyCheck()
     }
 }
 
-void StateCheck() // 状态检测
+void StateCheck(void) // 状态检测
 {
     if (KeyReset_State)
     {
@@ -95,13 +95,13 @@ void StateCheck() // 状态检测
         RunningState = 0;
 }
 
-void TimeReset()
+void TimeReset(void)
 {
     minutes = 0;
     seconds = 0;
     milliseconds = 0;
 }
-void TimeCal()
+void TimeCal(void)
 {
     milliseconds++;
     if (milliseconds >= 1000)
@@ -168,9 +168,9 @@ void main(void)
         if (trigger_1ms)
         {
             trigger_1ms = 0;
-            KeyCheck();
             if (RunningState == 1)
                 TimeCal();
+            KeyCheck();
         }
         if (trigger_10ms)
         {
