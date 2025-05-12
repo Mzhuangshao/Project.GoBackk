@@ -1,7 +1,40 @@
 Build target 'Target 1'
 compiling main.c...
 linking...
-Program Size: data=84.5 xdata=0 code=2115
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _SENDDATA
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  UART1_INIT
+    MODULE:  .\Objects\main.obj (MAIN)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _SENDDATA
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0620H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _SENDDATA
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0636H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _SENDDATA
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0653H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _SENDDATA
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 065CH
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  UART1_INIT
+    MODULE:  .\Objects\main.obj (MAIN)
+    ADDRESS: 0798H
+
+Program Size: data=86.5 xdata=0 code=2110
 creating hex file from ".\Objects\goBack"...
-".\Objects\goBack" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:00
+".\Objects\goBack" - 0 Error(s), 7 Warning(s).
+Build Time Elapsed:  00:00:01

@@ -386,6 +386,11 @@
               <FileType>1</FileType>
               <FilePath>.\User\main.c</FilePath>
             </File>
+            <File>
+              <FileName>Uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\Uart.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

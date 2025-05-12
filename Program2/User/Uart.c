@@ -13,9 +13,6 @@ void Uart1_Init(void) // 115200bps@11.0592MHz
     ES = 1;       // 使能串口1中断
 }
 
-/*---------------
-    发送数据值
-----------------*/
 void SendData(unsigned char dat)
 {
     while (UartBusy)
@@ -26,9 +23,13 @@ void SendData(unsigned char dat)
 
 void Uart1_Isr(void) interrupt 4
 {
-    if (TI)       // 检测串口1发送中断
-        TI = 0;   // 清除串口1发送中断请求位
-    if (RI)       // 检测串口1接收中断
-        RI = 0;   // 清除串口1接收中断请求位
-    UartBusy = 0; // 清忙标志
+    if (TI) // 检测串口1发送中断
+    {
+        TI = 0; // 清除串口1发送中断请求位
+    }
+    if (RI) // 检测串口1接收中断
+    {
+        RI = 0; // 清除串口1接收中断请求位
+    }
+    UartBusy = 0;
 }

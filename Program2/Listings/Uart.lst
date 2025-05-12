@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   UART                                                              05/02/2025 20:23:47 PAGE 1   
+C51 COMPILER V9.60.7.0   UART                                                              05/11/2025 17:24:52 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART
@@ -23,25 +23,26 @@ line level    source
   13   1          ES = 1;       // 使能串口1中断
   14   1      }
   15          
-  16          /*---------------
-  17              发送数据值
-  18          ----------------*/
-  19          void SendData(unsigned char dat)
-  20          {
-  21   1          while (UartBusy)
-  22   1              ; // 等待前面的数据发送完成
-  23   1          UartBusy = 1;
-  24   1          SBUF = dat; // 写数据到UART数据寄存器
-  25   1      }
-  26          
-  27          void Uart1_Isr(void) interrupt 4
-  28          {
-  29   1          if (TI)       // 检测串口1发送中断
-  30   1              TI = 0;   // 清除串口1发送中断请求位
-  31   1          if (RI)       // 检测串口1接收中断
-  32   1              RI = 0;   // 清除串口1接收中断请求位
-  33   1          UartBusy = 0; // 清忙标志
-  34   1      }
+  16          void SendData(unsigned char dat)
+  17          {
+  18   1          while (UartBusy)
+  19   1              ; // 等待前面的数据发送完成
+  20   1          UartBusy = 1;
+  21   1          SBUF = dat; // 写数据到UART数据寄存器
+  22   1      }
+  23          
+  24          void Uart1_Isr(void) interrupt 4
+  25          {
+  26   1          if (TI) // 检测串口1发送中断
+  27   1          {
+  28   2              TI = 0; // 清除串口1发送中断请求位
+  29   2          }
+  30   1          if (RI) // 检测串口1接收中断
+  31   1          {
+  32   2              RI = 0; // 清除串口1接收中断请求位
+  33   2          }
+  34   1          UartBusy = 0;
+  35   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
@@ -49,9 +50,9 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      1    ----
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      2    ----
+   BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
 
 

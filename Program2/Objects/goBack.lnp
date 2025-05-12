@@ -1,4 +1,5 @@
 ".\Objects\STARTUP.obj",
-".\Objects\main.obj" 
+".\Objects\main.obj",
+".\Objects\Uart.obj" 
 TO ".\Objects\goBack" 
 PRINT(".\Listings\goBack.m51") RAMSIZE(256) 
