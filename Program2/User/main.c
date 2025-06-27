@@ -1,6 +1,11 @@
 #include "C51.h"
 #include <string.h>
 #include "Uart.h"
+
+#define sensorBack P24
+#define sensorGO P03
+#define KeyReset P14
+
 void TimeReset();
 
 static bit trigger_1ms = 0, trigger_10ms = 0;
@@ -28,12 +33,12 @@ void KeyCheck(void)
     switch (Key_Status_Check)
     {
     case 0:                       // 默认状态
-        if (P32 == 0)             // 检测按键电位为0
+        if (KeyReset == 0)             // 检测按键电位为0
             Key_Status_Check = 1; // 视按键为按下，进入去抖检测
         break;
 
     case 1:           // 判断按键是否真的按下
-        if (P32 == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
+        if (KeyReset == 0) // 检测按键电位为低，若这一步仍为0，则判定这次按下通过
         {
             KeyReset_State = 1;   // 按键按下状态标记
             Key_Status_Check = 2; // 进入下一个状态：等待按键松开
@@ -43,7 +48,7 @@ void KeyCheck(void)
         break;
 
     case 2:                       // 等待按键松开
-        if (P32 == 1)             // 按键电位为高，视为松开
+        if (KeyReset == 1)             // 按键电位为高，视为松开
             Key_Status_Check = 0; // 检测状态重置为默认
         break;
     default:
@@ -63,11 +68,11 @@ void StateCheck(void) // 状态检测
     switch (RunningState)
     {
     case 0:
-        if (P35 == 0)
+        if (sensorGO == 0)
             RunningState = 1;
         break;
     case 1:
-        if (P36 == 0)
+        if (sensorBack == 0)
             RunningState = 2;
         break;
     default:

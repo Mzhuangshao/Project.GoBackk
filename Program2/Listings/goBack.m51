@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/11/2025  17:24:53  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    06/12/2025  15:56:42  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -59,7 +59,7 @@ LINK MAP OF MODULE:  .\Objects\goBack (?C_STARTUP)
             CODE    0760H     0027H     UNIT         ?PR?PUTCHAR?PUTCHAR
             CODE    0787H     0025H     UNIT         ?PR?KEYCHECK?MAIN
             CODE    07ACH     0023H     UNIT         ?PR?MAIN?MAIN
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 2
 
 
             CODE    07CFH     0021H     UNIT         ?PR?TIMER0_ISR?MAIN
@@ -119,7 +119,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\goBack (?C_STARTUP)
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 3
 
 
   D:0083H         SYMBOL        DPH
@@ -175,15 +175,15 @@ SYMBOL TABLE OF MODULE:  .\Objects\goBack (?C_STARTUP)
   C:07ACH         PUBLIC        main
   D:005AH         SYMBOL        trigger_10ms_count
   C:0843H         PUBLIC        Timer0_Init
+  B:0080H.3       PUBLIC        P03
   D:0098H         PUBLIC        SCON
-  B:00B0H.2       PUBLIC        P32
+  B:0090H.4       PUBLIC        P14
   D:0089H         PUBLIC        TMOD
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 4
+
+
   D:0088H         PUBLIC        TCON
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 4
-
-
-  B:00B0H.5       PUBLIC        P35
-  B:00B0H.6       PUBLIC        P36
+  B:00A0H.4       PUBLIC        P24
   D:00F0H         PUBLIC        B
   D:008EH         PUBLIC        AUXR
   C:081FH         SYMBOL        _?ix1000
@@ -204,102 +204,102 @@ SYMBOL TABLE OF MODULE:  .\Objects\goBack (?C_STARTUP)
   D:005EH         SYMBOL        tableDebug
   D:00D0H         PUBLIC        PSW
   -------         PROC          TIMER0_INIT
-  C:0843H         LINE#         14
-  C:0843H         LINE#         15
-  C:0843H         LINE#         16
-  C:0846H         LINE#         17
-  C:0849H         LINE#         18
-  C:084CH         LINE#         19
-  C:084FH         LINE#         20
-  C:0851H         LINE#         21
-  C:0853H         LINE#         22
-  C:0855H         LINE#         23
+  C:0843H         LINE#         19
+  C:0843H         LINE#         20
+  C:0843H         LINE#         21
+  C:0846H         LINE#         22
+  C:0849H         LINE#         23
+  C:084CH         LINE#         24
+  C:084FH         LINE#         25
+  C:0851H         LINE#         26
+  C:0853H         LINE#         27
+  C:0855H         LINE#         28
   -------         ENDPROC       TIMER0_INIT
   -------         PROC          KEYCHECK
   -------         DO            
   D:0055H         SYMBOL        Key_Status_Check
   -------         ENDDO         
-  C:0787H         LINE#         25
-  C:0787H         LINE#         26
-  C:0787H         LINE#         28
-  C:0793H         LINE#         29
-  C:0793H         LINE#         30
-  C:0793H         LINE#         31
-  C:0796H         LINE#         32
-  C:0799H         LINE#         33
-  C:079AH         LINE#         35
-  C:079AH         LINE#         36
-  C:079DH         LINE#         37
-  C:079DH         LINE#         38
-  C:079FH         LINE#         39
-  C:07A2H         LINE#         40
-  C:07A3H         LINE#         45
-  C:07A3H         LINE#         46
-  C:07A6H         LINE#         47
-  C:07A6H         LINE#         48
-  C:07A8H         LINE#         49
-  C:07A8H         LINE#         50
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 5
+  C:0787H         LINE#         30
+  C:0787H         LINE#         31
+  C:0787H         LINE#         33
+  C:0793H         LINE#         34
+  C:0793H         LINE#         35
+  C:0793H         LINE#         36
+  C:0796H         LINE#         37
+  C:0799H         LINE#         38
+  C:079AH         LINE#         40
+  C:079AH         LINE#         41
+  C:079DH         LINE#         42
+  C:079DH         LINE#         43
+  C:079FH         LINE#         44
+  C:07A2H         LINE#         45
+  C:07A3H         LINE#         50
+  C:07A3H         LINE#         51
+  C:07A6H         LINE#         52
+  C:07A6H         LINE#         53
+  C:07A8H         LINE#         54
+  C:07A8H         LINE#         55
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 5
 
 
-  C:07ABH         LINE#         51
-  C:07ABH         LINE#         52
-  C:07ABH         LINE#         53
+  C:07ABH         LINE#         56
+  C:07ABH         LINE#         57
+  C:07ABH         LINE#         58
   -------         ENDPROC       KEYCHECK
   -------         PROC          STATECHECK
-  C:0736H         LINE#         55
-  C:0736H         LINE#         56
-  C:0736H         LINE#         57
-  C:0739H         LINE#         58
-  C:0739H         LINE#         59
-  C:073BH         LINE#         60
-  C:073EH         LINE#         61
-  C:0741H         LINE#         62
-  C:0741H         LINE#         63
-  C:0749H         LINE#         64
-  C:0749H         LINE#         65
-  C:0749H         LINE#         66
-  C:074CH         LINE#         67
-  C:074FH         LINE#         68
-  C:0751H         LINE#         69
-  C:0751H         LINE#         70
-  C:0754H         LINE#         71
-  C:0757H         LINE#         72
-  C:0757H         LINE#         73
-  C:0757H         LINE#         74
-  C:0757H         LINE#         75
-  C:0757H         LINE#         76
-  C:075CH         LINE#         77
-  C:075FH         LINE#         78
+  C:0736H         LINE#         60
+  C:0736H         LINE#         61
+  C:0736H         LINE#         62
+  C:0739H         LINE#         63
+  C:0739H         LINE#         64
+  C:073BH         LINE#         65
+  C:073EH         LINE#         66
+  C:0741H         LINE#         67
+  C:0741H         LINE#         68
+  C:0749H         LINE#         69
+  C:0749H         LINE#         70
+  C:0749H         LINE#         71
+  C:074CH         LINE#         72
+  C:074FH         LINE#         73
+  C:0751H         LINE#         74
+  C:0751H         LINE#         75
+  C:0754H         LINE#         76
+  C:0757H         LINE#         77
+  C:0757H         LINE#         78
+  C:0757H         LINE#         79
+  C:0757H         LINE#         80
+  C:0757H         LINE#         81
+  C:075CH         LINE#         82
+  C:075FH         LINE#         83
   -------         ENDPROC       STATECHECK
   -------         PROC          TIMERESET
-  C:0856H         LINE#         80
-  C:0856H         LINE#         81
-  C:0856H         LINE#         82
-  C:085BH         LINE#         83
-  C:085FH         LINE#         84
-  C:0863H         LINE#         85
+  C:0856H         LINE#         85
+  C:0856H         LINE#         86
+  C:0856H         LINE#         87
+  C:085BH         LINE#         88
+  C:085FH         LINE#         89
+  C:0863H         LINE#         90
   -------         ENDPROC       TIMERESET
   -------         PROC          TIMECAL
-  C:0702H         LINE#         86
-  C:0702H         LINE#         87
-  C:0702H         LINE#         88
-  C:070AH         LINE#         89
-  C:0713H         LINE#         90
-  C:0713H         LINE#         91
-  C:0718H         LINE#         92
-  C:0720H         LINE#         93
-  C:0728H         LINE#         94
-  C:0728H         LINE#         95
-  C:072DH         LINE#         96
-  C:0735H         LINE#         97
-  C:0735H         LINE#         98
-  C:0735H         LINE#         99
+  C:0702H         LINE#         91
+  C:0702H         LINE#         92
+  C:0702H         LINE#         93
+  C:070AH         LINE#         94
+  C:0713H         LINE#         95
+  C:0713H         LINE#         96
+  C:0718H         LINE#         97
+  C:0720H         LINE#         98
+  C:0728H         LINE#         99
+  C:0728H         LINE#         100
+  C:072DH         LINE#         101
+  C:0735H         LINE#         102
+  C:0735H         LINE#         103
+  C:0735H         LINE#         104
   -------         ENDPROC       TIMECAL
   -------         PROC          LED_SHOW
   -------         DO            
   D:0022H         SYMBOL        tableHead
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 6
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 6
 
 
   D:0026H         SYMBOL        tableDisplaySettting
@@ -309,66 +309,66 @@ SYMBOL TABLE OF MODULE:  .\Objects\goBack (?C_STARTUP)
   D:003FH         SYMBOL        i
   D:0040H         SYMBOL        sum
   -------         ENDDO         
-  C:0591H         LINE#         100
-  C:0591H         LINE#         101
-  C:0591H         LINE#         102
-  C:05A4H         LINE#         105
-  C:05B7H         LINE#         115
-  C:05BAH         LINE#         116
-  C:05C0H         LINE#         118
-  C:05ECH         LINE#         119
-  C:05F7H         LINE#         121
-  C:05FAH         LINE#         122
-  C:060BH         LINE#         123
-  C:0615H         LINE#         124
-  C:0623H         LINE#         126
-  C:0627H         LINE#         129
-  C:062DH         LINE#         131
-  C:0630H         LINE#         132
-  C:0643H         LINE#         133
-  C:0646H         LINE#         134
-  C:0659H         LINE#         135
-  C:0663H         LINE#         136
-  C:0671H         LINE#         137
+  C:0591H         LINE#         105
+  C:0591H         LINE#         106
+  C:0591H         LINE#         107
+  C:05A4H         LINE#         110
+  C:05B7H         LINE#         120
+  C:05BAH         LINE#         121
+  C:05C0H         LINE#         123
+  C:05ECH         LINE#         124
+  C:05F7H         LINE#         126
+  C:05FAH         LINE#         127
+  C:060BH         LINE#         128
+  C:0615H         LINE#         129
+  C:0623H         LINE#         131
+  C:0627H         LINE#         134
+  C:062DH         LINE#         136
+  C:0630H         LINE#         137
+  C:0643H         LINE#         138
+  C:0646H         LINE#         139
+  C:0659H         LINE#         140
+  C:0663H         LINE#         141
+  C:0671H         LINE#         142
   -------         ENDPROC       LED_SHOW
   -------         PROC          MAIN
-  C:07ACH         LINE#         140
-  C:07ACH         LINE#         141
-  C:07ACH         LINE#         142
-  C:07AFH         LINE#         143
-  C:07B2H         LINE#         144
-  C:07B5H         LINE#         145
-  C:07B8H         LINE#         146
-  C:07BAH         LINE#         147
-  C:07BAH         LINE#         148
-  C:07BAH         LINE#         149
-  C:07BDH         LINE#         150
-  C:07C0H         LINE#         151
-  C:07C0H         LINE#         152
-  C:07C2H         LINE#         153
-  C:07C5H         LINE#         154
-  C:07C5H         LINE#         155
-  C:07C8H         LINE#         156
-  C:07C8H         LINE#         157
-  C:07CAH         LINE#         158
-  C:07CDH         LINE#         166
-  C:07CDH         LINE#         167
+  C:07ACH         LINE#         145
+  C:07ACH         LINE#         146
+  C:07ACH         LINE#         147
+  C:07AFH         LINE#         148
+  C:07B2H         LINE#         149
+  C:07B5H         LINE#         150
+  C:07B8H         LINE#         151
+  C:07BAH         LINE#         152
+  C:07BAH         LINE#         153
+  C:07BAH         LINE#         154
+  C:07BDH         LINE#         155
+  C:07C0H         LINE#         156
+  C:07C0H         LINE#         157
+  C:07C2H         LINE#         158
+  C:07C5H         LINE#         159
+  C:07C5H         LINE#         160
+  C:07C8H         LINE#         161
+  C:07C8H         LINE#         162
+  C:07CAH         LINE#         163
+  C:07CDH         LINE#         171
+  C:07CDH         LINE#         172
   -------         ENDPROC       MAIN
   -------         PROC          TIMER0_ISR
-  C:07CFH         LINE#         171
-  C:07D3H         LINE#         173
-  C:07D5H         LINE#         174
-  C:07D7H         LINE#         175
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 7
+  C:07CFH         LINE#         176
+  C:07D3H         LINE#         178
+  C:07D5H         LINE#         179
+  C:07D7H         LINE#         180
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 7
 
 
-  C:07DEH         LINE#         176
-  C:07DEH         LINE#         177
-  C:07E1H         LINE#         178
-  C:07E3H         LINE#         179
-  C:07E3H         LINE#         180
-  C:07E8H         LINE#         181
-  C:07EBH         LINE#         182
+  C:07DEH         LINE#         181
+  C:07DEH         LINE#         182
+  C:07E1H         LINE#         183
+  C:07E3H         LINE#         184
+  C:07E3H         LINE#         185
+  C:07E8H         LINE#         186
+  C:07EBH         LINE#         187
   -------         ENDPROC       TIMER0_ISR
   -------         ENDMOD        MAIN
 
@@ -419,7 +419,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\goBack (?C_STARTUP)
   -------         ENDPROC       UART1_INIT
   -------         PROC          _SENDDATA
   D:0007H         SYMBOL        dat
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 8
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 8
 
 
   C:0003H         LINE#         16
@@ -479,7 +479,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\goBack (?C_STARTUP)
   C:04F4H         PUBLIC        ?C?CSTPTR
   -------         ENDMOD        ?C?CSTPTR
 
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/11/2025  17:24:53  PAGE 9
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  06/12/2025  15:56:42  PAGE 9
 
 
   -------         MODULE        ?C?UIDIV
